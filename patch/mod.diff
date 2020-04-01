@@ -1,0 +1,315 @@
+Only in bak/Assembly-CSharp: bin
+diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiDisplayDiagnostics.cs gamesrc/Assembly-CSharp/MiDisplayDiagnostics.cs
+3d2
+< using System.Text;
+51,54d49
+< 		if (MiSingletonScriptableObject<GlobalSettings>.instance.bDevOptionsExtra)
+< 		{
+< 			MiDisplayDiagnostics.s_bOn = true;
+< 		}
+97,126d91
+< 		StringBuilder stringBuilder = new StringBuilder(this.m_strFPS);
+< 		stringBuilder.Append("\nTotal: ");
+< 		uint totalAllocatedMemoryKB = MiProfiler.GetTotalAllocatedMemoryKB();
+< 		if (totalAllocatedMemoryKB > this.m_iGetTotalAllocatedMemoryMax)
+< 		{
+< 			this.m_iGetTotalAllocatedMemoryMax = totalAllocatedMemoryKB;
+< 		}
+< 		uint monoUsedSizeKB = MiProfiler.GetMonoUsedSizeKB();
+< 		if (monoUsedSizeKB > this.m_iGetMonoUsedSizeMax)
+< 		{
+< 			this.m_iGetMonoUsedSizeMax = monoUsedSizeKB;
+< 		}
+< 		stringBuilder.Append(totalAllocatedMemoryKB.ToString("#,#"));
+< 		stringBuilder.Append(" / ");
+< 		stringBuilder.Append(this.m_iGetTotalAllocatedMemoryMax.ToString("#,#"));
+< 		stringBuilder.Append("\nMono: ");
+< 		stringBuilder.Append(monoUsedSizeKB.ToString("#,#"));
+< 		stringBuilder.Append(" / ");
+< 		stringBuilder.Append(this.m_iGetMonoUsedSizeMax.ToString("#,#"));
+< 		stringBuilder.Append("\nReserv: ");
+< 		stringBuilder.Append(MiProfiler.GetTotalUnusedReservedMemoryKB().ToString("#,#"));
+< 		stringBuilder.Append(" / ");
+< 		stringBuilder.Append(MiProfiler.GetTotalReservedMemoryKB().ToString("#,#"));
+< 		if (this.m_fLastHoldFrame > 3f)
+< 		{
+< 			this.m_strLastHoldFrame = this.strHoldFrame(num);
+< 			this.m_fLastHoldFrame = 0f;
+< 		}
+< 		stringBuilder.Append(this.m_strLastHoldFrame);
+< 		this.m_text.text = stringBuilder.ToString();
+139a105
+> 			return;
+141c107
+< 		else if (MiInputRewired.rewiredInput.GetButtonDown(48))
+---
+> 		if (MiInputRewired.rewiredInput.GetButtonDown(48))
+175a142
+> 			return;
+177c144
+< 		else if (Input.GetKeyDown(KeyCode.F6))
+---
+> 		if (Input.GetKeyDown(KeyCode.F6))
+179a147
+> 			return;
+181c149
+< 		else if (Input.GetKeyDown(KeyCode.F7))
+---
+> 		if (Input.GetKeyDown(KeyCode.F7))
+198,203c166
+< 		string str = string.Empty;
+< 		str += "\nLast hold frame: ";
+< 		str += StringExtensions.strGetHtmlColorStringsNonAlloc(col)[0];
+< 		str += fDeltaTime.ToString("f2");
+< 		str += StringExtensions.strGetHtmlColorStringsNonAlloc(col)[1];
+< 		return str + "s";
+---
+> 		return string.Empty + "\nLast hold frame: " + StringExtensions.strGetHtmlColorStringsNonAlloc(col)[0] + fDeltaTime.ToString("f2") + StringExtensions.strGetHtmlColorStringsNonAlloc(col)[1] + "s";
+208,209c171,176
+< 		this.frames++;
+< 		double num = (double)Time.realtimeSinceStartup;
+---
+> 		double num;
+> 		checked
+> 		{
+> 			this.frames++;
+> 			num = (double)Time.realtimeSinceStartup;
+> 		}
+214c181,197
+< 		if (this.timeleft <= 0.0)
+---
+> 		checked
+> 		{
+> 			if (this.timeleft <= 0.0)
+> 			{
+> 				this.fps = this.accum / (double)this.frames;
+> 				this.m_strFPS = "FPS: " + this.fps.ToString("f2");
+> 				this.timeleft = (double)this.updateInterval;
+> 				this.accum = 0.0;
+> 				this.frames = 0;
+> 				this.gotIntervals++;
+> 			}
+> 		}
+> 	}
+>
+> 	void modUpdate()
+> 	{
+> 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha0))
+216,221c199
+< 			this.fps = this.accum / (double)this.frames;
+< 			this.m_strFPS = "FPS: " + this.fps.ToString("f2");
+< 			this.timeleft = (double)this.updateInterval;
+< 			this.accum = 0.0;
+< 			this.frames = 0;
+< 			this.gotIntervals++;
+---
+> 			MiAudioMixer.s_bMutePlayerVoice = true;
+diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs gamesrc/Assembly-CSharp/MiFreeCam.cs
+216a217
+> 			this.modUpdate();
+350c351
+< 		if (this.bShowSettings)
+---
+> 		checked
+352,356c353
+< 			GUIStyle guistyle = new GUIStyle(GUI.skin.GetStyle("TextArea"));
+< 			guistyle.normal.textColor = ((!MiFreeCam.s_bOn) ? Color.red : Color.green);
+< 			GUILayout.Space(40f);
+< 			GUILayout.BeginVertical(new GUILayoutOption[0]);
+< 			GUILayout.TextArea(string.Concat(new object[]
+---
+> 			if (this.bShowSettings)
+358,367c355,359
+< 				"Free Cam Active ",
+< 				MiFreeCam.s_bOn,
+< 				" locked: ",
+< 				!this.m_bMoveCam
+< 			}), guistyle, new GUILayoutOption[0]);
+< 			string text = string.Empty;
+< 			for (int i = 0; i < MiFreeCam.m_arSettings.Length; i++)
+< 			{
+< 				string text2 = ((MiFreeCam.EnumSetting)i).ToString() + ": " + MiFreeCam.m_arSettings[i].strValue();
+< 				if (i != 0)
+---
+> 				GUIStyle guistyle = new GUIStyle(GUI.skin.GetStyle("TextArea"));
+> 				guistyle.normal.textColor = ((!MiFreeCam.s_bOn) ? Color.red : Color.green);
+> 				GUILayout.Space(40f);
+> 				GUILayout.BeginVertical(new GUILayoutOption[0]);
+> 				GUILayout.TextArea(string.Concat(new object[]
+369,371c361,367
+< 					text += "\n";
+< 				}
+< 				if (i == (int)this.m_eSetting)
+---
+> 					"Free Cam Active ",
+> 					MiFreeCam.s_bOn,
+> 					" locked: ",
+> 					!this.m_bMoveCam
+> 				}), guistyle, new GUILayoutOption[0]);
+> 				string text = string.Empty;
+> 				for (int i = 0; i < MiFreeCam.m_arSettings.Length; i++)
+373c369,382
+< 					text = text + "---> " + text2;
+---
+> 					MiFreeCam.EnumSetting enumSetting = (MiFreeCam.EnumSetting)i;
+> 					string text2 = enumSetting.ToString() + ": " + MiFreeCam.m_arSettings[i].strValue();
+> 					if (i != 0)
+> 					{
+> 						text += "\n";
+> 					}
+> 					if (i == (int)this.m_eSetting)
+> 					{
+> 						text = text + "---> " + text2;
+> 					}
+> 					else
+> 					{
+> 						text += text2;
+> 					}
+375c384,389
+< 				else
+---
+> 				GUILayout.TextArea("Camera Settings:", new GUILayoutOption[0]);
+> 				GUILayout.TextArea(text, new GUILayoutOption[0]);
+> 				GUILayout.TextArea("shadow-warrior-debug Controls:", new GUILayoutOption[0]);
+> 				GUILayout.EndVertical();
+> 				GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+> 				GUILayout.TextArea(string.Concat(new object[]
+377,378c391,448
+< 					text += text2;
+< 				}
+---
+> 					"FOV: ",
+> 					this.m_cam.fieldOfView,
+> 					"\nSet FOV to 60: ",
+> 					"\nReset Position: ",
+> 					"\nNext Frame: ",
+> 					"\nLock Camera: ",
+> 					!this.m_bMoveCam,
+> 					"\nHide debug UI: ",
+> 					"\nHide game UI: ",
+> 					"\nControl time speed: ",
+> 					"\nDisable character voices: ",
+> 					"\nMove: ",
+> 					"\nFaster camera/fov change: "
+> 				}), new GUILayoutOption[0]);
+> 				GUILayout.TextArea(string.Concat(new object[]
+> 				{
+> 					"Keypad1/3",
+> 					"\nShift + '",
+> 					"\n0",
+> 					"\nKeypadPlus",
+> 					"\nKeypad \\",
+> 					"\nInsert",
+> 					"\n,",
+> 					"\nShift+[1 to 5]",
+> 					"\nShift + 0",
+> 					"\nKeypad 8456",
+> 					"\nShift"
+> 				}), new GUILayoutOption[0]);
+> 				GUILayout.EndHorizontal();
+> 				GUILayout.BeginVertical(new GUILayoutOption[0]);
+> 				GUILayout.TextArea("Cheats: (choose target with left click)", new GUILayoutOption[0]);
+> 				GUILayout.EndVertical();
+> 				GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+> 				GUILayout.TextArea(string.Concat(new object[]
+> 				{
+> 					"Indetectability - PageUp/PageDown",
+> 					"\nInvincibility - Home/End"
+> 				}), new GUILayoutOption[0]);
+> 				GUILayout.TextArea(string.Concat(new object[]
+> 				{
+> 					"PageUp/PageDown",
+> 					"\nHome/End"
+> 				}), new GUILayoutOption[0]);
+> 				GUILayout.EndHorizontal();
+> 				GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+> 				GUILayout.TextArea(string.Concat(new object[]
+> 				{
+> 					"Camera settings control",
+> 					"\nMove cursor up/down",
+> 					"\nIncrease/Decrease"
+> 				}), new GUILayoutOption[0]);
+> 				GUILayout.TextArea(string.Concat(new object[]
+> 				{
+> 					"(needs Numpad0 active)",
+> 					"\nPageUp/PageDown",
+> 					"\nHome/End"
+> 				}), new GUILayoutOption[0]);
+> 				GUILayout.EndHorizontal();
+380,394c450,457
+< 			GUILayout.TextArea(text, new GUILayoutOption[0]);
+< 			GUILayout.EndVertical();
+< 			string text3 = string.Concat(new object[]
+< 			{
+< 				"FOV: ",
+< 				this.m_cam.fieldOfView,
+< 				"\nReset Position: \nMove Back: \nNext Frame: \nLock Camera: ",
+< 				!this.m_bMoveCam,
+< 				"\nHide this UI: "
+< 			});
+< 			GUILayout.BeginHorizontal(new GUILayoutOption[0]);
+< 			GUILayout.TextArea(text3, new GUILayoutOption[0]);
+< 			string text4 = "Keypad1 / Keypad3\n0\n9\nKeypadPlus\nKeypad ,\nInsert";
+< 			GUILayout.TextArea(text4, new GUILayoutOption[0]);
+< 			GUILayout.EndHorizontal();
+---
+> 		}
+> 	}
+>
+> 	void modUpdate()
+> 	{
+> 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Quote))
+> 		{
+> 			this.m_cam.fov = 60f;
+572c635
+< 	static float m_fov = 45f;
+---
+> 	static float m_fov = 80f;
+574c637
+< 	static float m_farPlane = 600f;
+---
+> 	static float m_farPlane = 2000f;
+582c645
+< 	static float fMulti = 2f;
+---
+> 	static float fMulti = 7f;
+diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiTime.cs gamesrc/Assembly-CSharp/MiTime.cs
+418c418
+< 		if (MiTime.s_bFrozen || MiTime.s_bPaused)
+---
+> 		if (MiTime.s_bFrozen || MiTime.s_bPaused || MiDisplayDiagnostics.bOn)
+422c422
+< 		if (Input.GetKeyDown(KeyCode.Keypad1))
+---
+> 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha1))
+425a426
+> 			return;
+427c428
+< 		else if (Input.GetKeyDown(KeyCode.Keypad2))
+---
+> 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha2))
+430a432
+> 			return;
+432c434
+< 		else if (Input.GetKeyDown(KeyCode.Keypad3))
+---
+> 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha3))
+435a438
+> 			return;
+437c440
+< 		else if (Input.GetKeyDown(KeyCode.Keypad4))
+---
+> 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha4))
+440a444
+> 			return;
+442c446
+< 		else if (Input.GetKeyDown(KeyCode.Keypad5))
+---
+> 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha5))
+445a450
+> 			return;
+447c452
+< 		else if (Input.GetKeyDown(KeyCode.Keypad6))
+---
+> 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha6))
+Only in bak/Assembly-CSharp: obj

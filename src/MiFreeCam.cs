@@ -8,6 +8,11 @@ public class MiFreeCam : MonoBehaviour
 
     void Update()
     {
+        if (MiTime.sPaused)
+        {
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Insert))
         {
             this.bShowSettings = !this.bShowSettings;
@@ -59,7 +64,8 @@ public class MiFreeCam : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Quote))
         {
-            this.m_cam.fov = 60f;
+            this.m_cam.fov = 40f;
+            MiFreeCam.m_fov = 40f;
         }
     }
 
@@ -162,9 +168,9 @@ public class MiFreeCam : MonoBehaviour
 
     // ...
 
-    static float m_fSpeedCurrent = 3f;
+    static float m_fSpeedCurrent = 15f;
 
-    static float m_fov = 80f;
+    static float m_fov = 40f;
 
     static float m_farPlane = 2000f;
 
@@ -173,6 +179,43 @@ public class MiFreeCam : MonoBehaviour
     public GameObject m_goCamParent;
 
     bool bShowSettings = true;
+
+    enum EnumSetting
+    {
+        MoveSpeed,
+        MoveSmooth,
+        RotationSpeed,
+        RotationSmoth,
+        GlobalFog,
+        FogStartDistance,
+        Outlines,
+        DepthOfField,
+        DOFdis,
+        DOFsize,
+        DOFSmoothness,
+        CameraMoveBackSpeed,
+        CameraPos,
+        SettingsMultiplier,
+        COUNT
+    }
+
+    static MiFreeCam.SettingFreeCam[] m_arSettings = new MiFreeCam.SettingFreeCam[]
+    {
+        new MiFreeCam.SettingFreeCamFloat(15f),        // MoveSpeed
+        new MiFreeCam.SettingFreeCamFloat(0.3f, 0.1f), // MoveSmooth
+        new MiFreeCam.SettingFreeCamFloat(68f),        // RotationSpeed
+        new MiFreeCam.SettingFreeCamFloat(0.1f, 0.1f), // RotationSmoth
+        new MiFreeCam.SettingFreeCamBool(false),       // GlobalFog
+        new MiFreeCam.SettingFreeCamFloat(0f, 0f),     // FogStartDistance
+        new MiFreeCam.SettingFreeCamBool(false),       // Outlines
+        new MiFreeCam.SettingFreeCamBool(false),       // DepthOfField
+        new MiFreeCam.SettingFreeCamFloat(32f),        // DOFdis
+        new MiFreeCam.SettingFreeCamFloat(43f),        // DOFsize
+        new MiFreeCam.SettingFreeCamFloat(0.5f, 0.1f), // DOFSmoothness
+        new MiFreeCam.SettingFreeCamFloat(0.5f, 0.1f), // CameraMoveBackSpeed
+        new MiFreeCam.SettingFreeCamInt(-1),           // CameraPos
+        new MiFreeCam.SettingFreeCamFloat(7f, 7f)      // SettingsMultiplier
+    };
 
     // ...
 

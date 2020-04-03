@@ -9,6 +9,13 @@ Enhanced debug mode for Shadow Tactics: Blades of The Shogun.
 
 The mod has better keybinds that don't conflict when multiple debug options are used together, more convenient camera settings for video recording and overlay text showing all the available functions.
 
+## TODO:
+
+- Finish readme
+- Update patch file for first release
+- Upload first release DLL
+- Force FOV when toggling camera on
+
 # Setup
 
 ## Install
@@ -22,6 +29,18 @@ The mod has better keybinds that don't conflict when multiple debug options are 
 # Keybinds
 
 `TODO`
+
+# Notes about the game
+
+The 'When Cut Across the Neck' achievement can be obtained by shooting Noboru with your matchlock pistol (when using the teleport) instead of making the soldier misfire.
+
+## Characters development names:
+
+Hayato - Ninja
+Yuki - Trapper
+Mugen - ?
+Ayko - Geisha
+Takuma - Alchemist
 
 # License
 

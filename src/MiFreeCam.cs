@@ -67,6 +67,12 @@ public class MiFreeCam : MonoBehaviour
             this.m_cam.fov = 40f;
             MiFreeCam.m_fov = 40f;
         }
+        if (MiFreeCam.bOn)
+        {
+            Cursor.visible = false;
+            return;
+        }
+        Cursor.visible = true;
     }
 
     void OnGUI()
@@ -163,6 +169,23 @@ public class MiFreeCam : MonoBehaviour
                 }), new GUILayoutOption[0]);
                 GUILayout.EndHorizontal();
             }
+        }
+    }
+
+    void switchOnOff(bool _bFirstTime = false)
+    {
+        MiFreeCam.s_bOn = !MiFreeCam.s_bOn;
+        MiInputRewired.setActivePlayerMap(MiInputMaps.DevInput, !MiFreeCam.s_bOn, 2);
+        MiInputRewired.setActivePlayerMap(MiInputMaps.CheatInput, !MiFreeCam.s_bOn, 2);
+        if (MiFreeCam.s_bOn)
+        {
+            Cursor.visible = false;
+            // ...
+        }
+        else
+        {
+            Cursor.visible = false;
+            // ...
         }
     }
 

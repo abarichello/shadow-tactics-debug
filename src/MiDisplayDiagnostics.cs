@@ -7,8 +7,37 @@ public class MiDisplayDiagnostics : MiSingletonMonoMortal<MiDisplayDiagnostics>
 {
     // ...
 
+    void handleFreeCam()
+    {
+        if (Input.GetKeyDown(KeyCode.Keypad0))
+        {
+            MiFreeCam.bToggle();
+        }
+    }
+
     void Update()
     {
+
+        if (MiDisplayDiagnostics.s_bScreenshotMode)
+        {
+            this.screenshotMode();
+        }
+        if (MiSingletonScriptableObject<GlobalSettings>.instance.bShowDevOptions)
+        {
+            this.takeScreenshot();
+        }
+        if (MiSingletonScriptableObject<GlobalSettings>.instance.bDevOptionsExtra)
+        {
+            this.handleFreeCam();
+            this.checkToggleActive();
+        }
+
+        // ...
+
+        if (!MiDisplayDiagnostics.s_bOn)
+        {
+            return;
+        }
         // ...
         this.calcFps();
         this.modUpdate();
@@ -23,4 +52,6 @@ public class MiDisplayDiagnostics : MiSingletonMonoMortal<MiDisplayDiagnostics>
     }
 
     // ...
+
+    const bool c_bShowMemory = false;
 }

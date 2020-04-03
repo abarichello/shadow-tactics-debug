@@ -14,7 +14,6 @@ The mod has better keybinds that don't conflict when multiple debug options are 
 - Finish readme
 - Update patch file for first release
 - Upload first release DLL
-- Force FOV when toggling camera on
 
 # Setup
 
@@ -28,17 +27,18 @@ The mod has better keybinds that don't conflict when multiple debug options are 
 
 # Keybinds
 
-`TODO`
+<a><img src="https://i.imgur.com/IcNUnc6.png" width="500"></a>
 
 # Notes about the game
 
 The 'When Cut Across the Neck' achievement can be obtained by shooting Noboru with your matchlock pistol (when using the teleport) instead of making the soldier misfire.
+More dev options are available for spawning/killing/teleporting but they are undocumented, check the game's source code for the rest.
 
-## Characters development names:
+## Character development names:
 
 Hayato - Ninja
 Yuki - Trapper
-Mugen - ?
+Mugen - Warrior
 Ayko - Geisha
 Takuma - Alchemist
 

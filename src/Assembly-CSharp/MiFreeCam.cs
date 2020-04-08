@@ -73,6 +73,11 @@ public class MiFreeCam : MonoBehaviour
             return;
         }
         Cursor.visible = true;
+
+        if (Input.GetKey(KeyCode.Alpha0))
+        {
+            this.setToBirdViewCamPos();
+        }
     }
 
     void OnGUI()
@@ -117,9 +122,7 @@ public class MiFreeCam : MonoBehaviour
                 GUILayout.TextArea(string.Concat(new object[] {
                     "FOV: ",
                     this.m_cam.fieldOfView,
-                    "\nSet FOV to 60: ",
                     "\nReset Position: ",
-                    "\nNext Frame: ",
                     "\nLock Camera: ",
                     !this.m_bMoveCam,
                     "\nHide debug UI: ",
@@ -131,14 +134,12 @@ public class MiFreeCam : MonoBehaviour
                 }), new GUILayoutOption[0]);
                 GUILayout.TextArea(string.Concat(new object[] {
                     "Keypad1/3",
-                    "\nShift + '",
                     "\n0",
-                    "\nKeypadPlus",
                     "\nKeypad \\",
                     "\nInsert",
                     "\n,",
-                    "\nShift+[1 to 5]",
-                    "\nShift + 0",
+                    "\nControl+[1 to 5]",
+                    "\nControl + 0",
                     "\nKeypad 8456",
                     "\nShift"
                 }), new GUILayoutOption[0]);
@@ -184,8 +185,17 @@ public class MiFreeCam : MonoBehaviour
         }
         else
         {
-            Cursor.visible = false;
+            Cursor.visible = true;
             // ...
+        }
+    }
+
+    void changeSettings(float fDeltaTimeSettings)
+        {
+        // ...
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            this.setToBirdViewCamPos();
         }
     }
 
@@ -193,15 +203,9 @@ public class MiFreeCam : MonoBehaviour
 
     static float m_fSpeedCurrent = 15f;
 
-    static float m_fov = 40f;
-
-    static float m_farPlane = 2000f;
-
     public Camera m_cam;
 
     public GameObject m_goCamParent;
-
-    bool bShowSettings = true;
 
     enum EnumSetting
     {

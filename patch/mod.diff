@@ -1,117 +1,34 @@
-Only in bak/Assembly-CSharp: bin
 diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiDisplayDiagnostics.cs gamesrc/Assembly-CSharp/MiDisplayDiagnostics.cs
-3d2
-< using System.Text;
-51,54d49
-< 		if (MiSingletonScriptableObject<GlobalSettings>.instance.bDevOptionsExtra)
-< 		{
-< 			MiDisplayDiagnostics.s_bOn = true;
-< 		}
-97,126d91
-< 		StringBuilder stringBuilder = new StringBuilder(this.m_strFPS);
-< 		stringBuilder.Append("\nTotal: ");
-< 		uint totalAllocatedMemoryKB = MiProfiler.GetTotalAllocatedMemoryKB();
-< 		if (totalAllocatedMemoryKB > this.m_iGetTotalAllocatedMemoryMax)
-< 		{
-< 			this.m_iGetTotalAllocatedMemoryMax = totalAllocatedMemoryKB;
-< 		}
-< 		uint monoUsedSizeKB = MiProfiler.GetMonoUsedSizeKB();
-< 		if (monoUsedSizeKB > this.m_iGetMonoUsedSizeMax)
-< 		{
-< 			this.m_iGetMonoUsedSizeMax = monoUsedSizeKB;
-< 		}
-< 		stringBuilder.Append(totalAllocatedMemoryKB.ToString("#,#"));
-< 		stringBuilder.Append(" / ");
-< 		stringBuilder.Append(this.m_iGetTotalAllocatedMemoryMax.ToString("#,#"));
-< 		stringBuilder.Append("\nMono: ");
-< 		stringBuilder.Append(monoUsedSizeKB.ToString("#,#"));
-< 		stringBuilder.Append(" / ");
-< 		stringBuilder.Append(this.m_iGetMonoUsedSizeMax.ToString("#,#"));
-< 		stringBuilder.Append("\nReserv: ");
-< 		stringBuilder.Append(MiProfiler.GetTotalUnusedReservedMemoryKB().ToString("#,#"));
-< 		stringBuilder.Append(" / ");
-< 		stringBuilder.Append(MiProfiler.GetTotalReservedMemoryKB().ToString("#,#"));
-< 		if (this.m_fLastHoldFrame > 3f)
-< 		{
-< 			this.m_strLastHoldFrame = this.strHoldFrame(num);
-< 			this.m_fLastHoldFrame = 0f;
-< 		}
-< 		stringBuilder.Append(this.m_strLastHoldFrame);
-< 		this.m_text.text = stringBuilder.ToString();
-139a105
-> 			return;
-141c107
-< 		else if (MiInputRewired.rewiredInput.GetButtonDown(48))
----
-> 		if (MiInputRewired.rewiredInput.GetButtonDown(48))
-175a142
-> 			return;
-177c144
-< 		else if (Input.GetKeyDown(KeyCode.F6))
----
-> 		if (Input.GetKeyDown(KeyCode.F6))
-179a147
-> 			return;
-181c149
-< 		else if (Input.GetKeyDown(KeyCode.F7))
----
-> 		if (Input.GetKeyDown(KeyCode.F7))
-198,203c166
-< 		string str = string.Empty;
-< 		str += "\nLast hold frame: ";
-< 		str += StringExtensions.strGetHtmlColorStringsNonAlloc(col)[0];
-< 		str += fDeltaTime.ToString("f2");
-< 		str += StringExtensions.strGetHtmlColorStringsNonAlloc(col)[1];
-< 		return str + "s";
----
-> 		return string.Empty + "\nLast hold frame: " + StringExtensions.strGetHtmlColorStringsNonAlloc(col)[0] + fDeltaTime.ToString("f2") + StringExtensions.strGetHtmlColorStringsNonAlloc(col)[1] + "s";
-208,209c171,176
-< 		this.frames++;
-< 		double num = (double)Time.realtimeSinceStartup;
----
-> 		double num;
-> 		checked
-> 		{
-> 			this.frames++;
-> 			num = (double)Time.realtimeSinceStartup;
-> 		}
-214c181,197
-< 		if (this.timeleft <= 0.0)
----
-> 		checked
-> 		{
-> 			if (this.timeleft <= 0.0)
-> 			{
-> 				this.fps = this.accum / (double)this.frames;
-> 				this.m_strFPS = "FPS: " + this.fps.ToString("f2");
-> 				this.timeleft = (double)this.updateInterval;
-> 				this.accum = 0.0;
-> 				this.frames = 0;
-> 				this.gotIntervals++;
-> 			}
+126a127
+> 		this.modUpdate();
+221a223,230
 > 		}
 > 	}
->
+> 
 > 	void modUpdate()
 > 	{
 > 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha0))
-216,221c199
-< 			this.fps = this.accum / (double)this.frames;
-< 			this.m_strFPS = "FPS: " + this.fps.ToString("f2");
-< 			this.timeleft = (double)this.updateInterval;
-< 			this.accum = 0.0;
-< 			this.frames = 0;
-< 			this.gotIntervals++;
----
+> 		{
 > 			MiAudioMixer.s_bMutePlayerVoice = true;
 diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs gamesrc/Assembly-CSharp/MiFreeCam.cs
-216a217
+57a58
+> 				return;
+63c64
+< 			Cursor.visible = this.m_bCursorWasVisible;
+---
+> 			Cursor.visible = true;
+131a133,136
+> 		if (MiTime.sPaused)
+> 		{
+> 			return;
+> 		}
+216a222
 > 			this.modUpdate();
-350c351
+350c356
 < 		if (this.bShowSettings)
 ---
 > 		checked
-352,356c353
+352,356c358
 < 			GUIStyle guistyle = new GUIStyle(GUI.skin.GetStyle("TextArea"));
 < 			guistyle.normal.textColor = ((!MiFreeCam.s_bOn) ? Color.red : Color.green);
 < 			GUILayout.Space(40f);
@@ -119,7 +36,7 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs 
 < 			GUILayout.TextArea(string.Concat(new object[]
 ---
 > 			if (this.bShowSettings)
-358,367c355,359
+358,367c360,364
 < 				"Free Cam Active ",
 < 				MiFreeCam.s_bOn,
 < 				" locked: ",
@@ -136,7 +53,7 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs 
 > 				GUILayout.Space(40f);
 > 				GUILayout.BeginVertical(new GUILayoutOption[0]);
 > 				GUILayout.TextArea(string.Concat(new object[]
-369,371c361,367
+369,371c366,372
 < 					text += "\n";
 < 				}
 < 				if (i == (int)this.m_eSetting)
@@ -148,7 +65,7 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs 
 > 				}), guistyle, new GUILayoutOption[0]);
 > 				string text = string.Empty;
 > 				for (int i = 0; i < MiFreeCam.m_arSettings.Length; i++)
-373c369,382
+373c374,387
 < 					text = text + "---> " + text2;
 ---
 > 					MiFreeCam.EnumSetting enumSetting = (MiFreeCam.EnumSetting)i;
@@ -165,7 +82,7 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs 
 > 					{
 > 						text += text2;
 > 					}
-375c384,389
+375c389,394
 < 				else
 ---
 > 				GUILayout.TextArea("Camera Settings:", new GUILayoutOption[0]);
@@ -174,15 +91,13 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs 
 > 				GUILayout.EndVertical();
 > 				GUILayout.BeginHorizontal(new GUILayoutOption[0]);
 > 				GUILayout.TextArea(string.Concat(new object[]
-377,378c391,448
+377,378c396,449
 < 					text += text2;
 < 				}
 ---
 > 					"FOV: ",
 > 					this.m_cam.fieldOfView,
-> 					"\nSet FOV to 60: ",
 > 					"\nReset Position: ",
-> 					"\nNext Frame: ",
 > 					"\nLock Camera: ",
 > 					!this.m_bMoveCam,
 > 					"\nHide debug UI: ",
@@ -195,14 +110,12 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs 
 > 				GUILayout.TextArea(string.Concat(new object[]
 > 				{
 > 					"Keypad1/3",
-> 					"\nShift + '",
 > 					"\n0",
-> 					"\nKeypadPlus",
 > 					"\nKeypad \\",
 > 					"\nInsert",
 > 					"\n,",
-> 					"\nShift+[1 to 5]",
-> 					"\nShift + 0",
+> 					"\nControl+[1 to 5]",
+> 					"\nControl + 0",
 > 					"\nKeypad 8456",
 > 					"\nShift"
 > 				}), new GUILayoutOption[0]);
@@ -236,7 +149,7 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs 
 > 					"\nHome/End"
 > 				}), new GUILayoutOption[0]);
 > 				GUILayout.EndHorizontal();
-380,394c450,457
+380,394c451,469
 < 			GUILayout.TextArea(text, new GUILayoutOption[0]);
 < 			GUILayout.EndVertical();
 < 			string text3 = string.Concat(new object[]
@@ -255,24 +168,52 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiFreeCam.cs 
 ---
 > 		}
 > 	}
->
+> 
 > 	void modUpdate()
 > 	{
 > 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Quote))
 > 		{
-> 			this.m_cam.fov = 60f;
-572c635
-< 	static float m_fov = 45f;
+> 			this.m_cam.fov = 40f;
+> 			MiFreeCam.m_fov = 40f;
+> 		}
+> 		if (MiFreeCam.bOn)
+> 		{
+> 			Cursor.visible = false;
+> 			return;
+> 		}
+> 		Cursor.visible = true;
+> 		if (Input.GetKey(KeyCode.Alpha0))
+> 		{
+> 			this.setToBirdViewCamPos();
+560c635
+< 	static float m_fSpeedCurrent = 3f;
 ---
-> 	static float m_fov = 80f;
-574c637
-< 	static float m_farPlane = 600f;
+> 	static float m_fSpeedCurrent = 15f;
+618,619d692
+< 		new MiFreeCam.SettingFreeCamFloat(6f),
+< 		new MiFreeCam.SettingFreeCamFloat(0.3f, 0.1f),
+620a694,695
+> 		new MiFreeCam.SettingFreeCamFloat(0.3f, 0.1f),
+> 		new MiFreeCam.SettingFreeCamFloat(68f),
+622,624c697,699
+< 		new MiFreeCam.SettingFreeCamBool(true),
+< 		new MiFreeCam.SettingFreeCamFloat(0f, 10f),
+< 		new MiFreeCam.SettingFreeCamBool(true),
 ---
-> 	static float m_farPlane = 2000f;
-582c645
-< 	static float fMulti = 2f;
+> 		new MiFreeCam.SettingFreeCamBool(false),
+> 		new MiFreeCam.SettingFreeCamFloat(0f, 0f),
+> 		new MiFreeCam.SettingFreeCamBool(false),
+631c706
+< 		new MiFreeCam.SettingFreeCamFloat(1f, 1f)
 ---
-> 	static float fMulti = 7f;
+> 		new MiFreeCam.SettingFreeCamFloat(7f, 7f)
+diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiMouse.cs gamesrc/Assembly-CSharp/MiMouse.cs
+228a229,233
+> 		if (MiFreeCam.bOn)
+> 		{
+> 			Cursor.visible = false;
+> 			return;
+> 		}
 diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiTime.cs gamesrc/Assembly-CSharp/MiTime.cs
 418c418
 < 		if (MiTime.s_bFrozen || MiTime.s_bPaused)
@@ -312,4 +253,4 @@ diff -r '--exclude=*.csproj' '--exclude=*.sln' bak/Assembly-CSharp/MiTime.cs gam
 < 		else if (Input.GetKeyDown(KeyCode.Keypad6))
 ---
 > 		if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Alpha6))
-Only in bak/Assembly-CSharp: obj
+Binary files bak/Assembly-CSharp/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache and gamesrc/Assembly-CSharp/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache differ

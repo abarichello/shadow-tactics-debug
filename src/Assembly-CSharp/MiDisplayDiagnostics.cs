@@ -34,11 +34,6 @@ public class MiDisplayDiagnostics : MiSingletonMonoMortal<MiDisplayDiagnostics>
 
         // ...
 
-        if (!MiDisplayDiagnostics.s_bOn)
-        {
-            return;
-        }
-        // ...
         this.calcFps();
         this.modUpdate();
     }

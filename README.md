@@ -9,9 +9,15 @@ Currently supports Steam/Windows release on version **2.2.10.F**.
 
 The mod has better keybinds that don't conflict when multiple debug options are used together, more convenient camera settings for video recording and overlay text showing all the available functions.
 
-#### TODO:
+# Screenshots/Video:
 
-- Add screenshots and video
+- Click any of the images below for videos showcasing this mod.
+<div>
+<a href="https://www.youtube.com/playlist?list=PLL93Jwp7IFncu44EeI-HppBQPMRcKoUov"><img src="https://i.imgur.com/yUXAws9.png"></a>
+<a href="https://www.youtube.com/playlist?list=PLL93Jwp7IFncu44EeI-HppBQPMRcKoUov"><img src="https://i.imgur.com/WKhtwVD.png"></a>
+<a href="https://www.youtube.com/playlist?list=PLL93Jwp7IFncu44EeI-HppBQPMRcKoUov"><img src="https://i.imgur.com/fZCVyzq.png"></a>
+<a href="https://www.youtube.com/playlist?list=PLL93Jwp7IFncu44EeI-HppBQPMRcKoUov"><img src="https://i.imgur.com/onDu7gz.png"></a> 
+</div>
 
 # Setup
 
